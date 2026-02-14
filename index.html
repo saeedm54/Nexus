@@ -16,15 +16,15 @@
         .circle { width: 280px; height: 280px; background: transparent; border-radius: 50%; margin: auto; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.1s; overflow: hidden; -webkit-tap-highlight-color: transparent; }
         .circle:active { transform: scale(0.95); }
         .logo-img { width: 280px; height: 280px; object-fit: cover; }
-        #energy { margin: 20px 0; }
-        #energy-bar { background: #333; height: 30px; width: 80%; max-width: 350px; margin: auto; border-radius: 15px; overflow: hidden; }
-        #energy-fill { background: #ffd700; height: 100%; transition: width 0.3s; }
-        #energy-text { font-size: 18px; margin-top: 10px; }
-        #recharge-text { font-size: 14px; color: #aaa; }
-        #tabs { display: flex; justify-content: space-around; position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 10px 0; border-top: 1px solid #444; }
-        .tab-btn { background: none; border: none; color: white; font-size: 16px; cursor: pointer; }
+        #tabs { display: flex; justify-content: flex-end; position: absolute; top: 10px; right: 10px; background: transparent; padding: 5px; }
+        .tab-btn { background: #ffd700; color: black; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 14px; margin-left: 5px; font-weight: bold; }
         .tab-content { display: none; margin: 20px 0 80px 0; padding: 10px; }
         .active { display: block; }
+        #energy { margin: 10px 0; text-align: left; padding-left: 20px; position: absolute; top: 50px; left: 10px; }
+        #energy-bar { background: #333; height: 20px; width: 150px; border-radius: 10px; overflow: hidden; }
+        #energy-fill { background: #ffd700; height: 100%; transition: width 0.3s; }
+        #energy-text { font-size: 14px; margin-top: 5px; }
+        #recharge-text { font-size: 12px; color: #aaa; }
         ul { list-style: none; padding: 0; }
         li { margin: 15px 0; background: #222; padding: 15px; border-radius: 10px; }
         button { background: #ffd700; color: black; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; }
@@ -53,6 +53,11 @@
             </div>
         </div>
     </div>
+    <div id="tabs">
+        <button class="tab-btn" onclick="showTab('shop')">Shop</button>
+        <button class="tab-btn" onclick="showTab('tasks')">Tasks</button>
+        <button class="tab-btn" onclick="showTab('boosts')">Boosts</button>
+    </div>
     <div id="mine-area" onclick="mine(event)">
         <div class="circle">
             <img src="https://i.imgur.com/c1kFmHd.png" alt="Nexus Coin" class="logo-img">
@@ -63,12 +68,6 @@
         Energy: <div id="energy-bar"><div id="energy-fill" style="width: 100%;"></div></div>
         <div id="energy-text">1,000/1,000</div>
         <div id="recharge-text">Full recharge in ~3h</div>
-    </div>
-
-    <div id="tabs">
-        <button class="tab-btn" onclick="showTab('shop')">Shop</button>
-        <button class="tab-btn" onclick="showTab('tasks')">Tasks</button>
-        <button class="tab-btn" onclick="showTab('boosts')">Boosts</button>
     </div>
 
     <div id="shop" class="tab-content">
@@ -99,7 +98,7 @@
         <h2>Boosts</h2>
         <ul>
             <li>Super Mine (Temporary +50% speed): Cost 10,000 nexoshi <button onclick="applyBoost('super', 10000, () => { setTimeout(resetBoost, 3600000); })">Buy</button></li>
-            <li>Auto Miner (Auto tap every 5s): Cost 20,000 nexoshi <button onclick="applyBoost('auto', 20000, startAutoMine)">Buy</button></li>
+            <li>Auto Miner (Auto tap every 5s): Cost 20,000 nexoshi <button onclick="if (balance >= 100000) applyBoost('auto', 20000, startAutoMine); else alert('You need at least 100,000 nexoshi to buy Auto Miner!');">Buy</button></li>
             <li>Tap Multiplier (+1x permanent): Cost 15,000 nexoshi <button onclick="applyBoost('multiplier', 15000, () => multiplier += 1)">Buy</button></li>
             <li>Recharge Time (Faster recharge): Cost 12,000 nexoshi <button onclick="applyBoost('recharge', 12000, () => rechargeRate += 1)">Buy</button></li>
             <li>Capacity (+500 max energy): Cost 18,000 nexoshi <button onclick="applyBoost('capacity', 18000, () => maxEnergy += 500)">Buy</button></li>
@@ -206,7 +205,7 @@
 
         setInterval(() => {
             if (energy < maxEnergy) {
-                energy += 1; // +1 per second
+                energy += 1; // +1 per second, even offline (interval always runs in background if page open, but for true offline, use gain on load)
                 if (energy > maxEnergy) energy = maxEnergy;
                 updateUI();
             }
@@ -336,17 +335,20 @@
                 balance += reward;
                 alert(`New referral! + ${reward.toLocaleString('en-US')} nexoshi`);
             }
-            document.getElementById('referral-link').innerText = 'Referral link: https://t.me/yourbot?start=ref_test'; // Replace with real bot username
+            document.getElementById('referral-link').innerText = 'Referral link: https://t.me/yourbot?start=ref_test'; // Replace with real
             updateUI();
         }
 
         function calculateOfflineGain() {
             const lastExit = parseInt(localStorage.getItem('lastExit')) || Date.now();
-            const offlineTime = (Date.now() - lastExit) / 3600000;
-            const offlineGain = Math.min(profitHour * offlineTime, maxEnergy);
-            if (offlineGain > 0) {
-                balance += offlineGain;
-                alert(`Offline gain: + ${offlineGain.toFixed(0)} nexoshi`);
+            const offlineTime = (Date.now() - lastExit) / 1000; // seconds
+            const offlineEnergyGain = Math.min(offlineTime * rechargeRate, maxEnergy - energy); // Charge energy offline
+            const offlineBalanceGain = Math.min(profitHour * (offlineTime / 3600), offlineEnergyGain); // Gain balance based on energy
+            if (offlineEnergyGain > 0) {
+                energy += offlineEnergyGain;
+                if (energy > maxEnergy) energy = maxEnergy;
+                balance += offlineBalanceGain;
+                alert(`Offline gain: + ${offlineBalanceGain.toFixed(0)} nexoshi, energy charged: + ${offlineEnergyGain.toFixed(0)}`);
                 updateUI();
             }
             localStorage.setItem('lastExit', Date.now());
