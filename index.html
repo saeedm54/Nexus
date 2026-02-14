@@ -11,9 +11,9 @@
         #header { padding: 10px; background: #1a1a1a; }
         #stats { display: flex; justify-content: space-around; margin: 10px 0; font-size: 14px; }
         #mine-area { margin: 20px 0; position: relative; }
-        .circle { width: 220px; height: 220px; background: #ffd700; border-radius: 50%; margin: auto; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.1s; }
+        .circle { width: 220px; height: 220px; background: transparent; border-radius: 50%; margin: auto; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.1s; overflow: hidden; }
         .circle:active { transform: scale(0.95); }
-        .logo-img { width: 150px; height: 150px; }
+        .logo-img { width: 220px; height: 220px; object-fit: cover; } /* لوگو دقیق اندازه دایره و پر شده */
         #energy { margin: 10px 0; }
         #energy-bar { background: #333; height: 20px; width: 80%; max-width: 300px; margin: auto; border-radius: 10px; overflow: hidden; }
         #energy-fill { background: #ffd700; height: 100%; transition: width 0.3s; }
@@ -93,7 +93,7 @@
     </div>
 
     <script>
-        // Local storage for testing (instead of Firebase)
+        // Local storage for testing
         let balance = parseInt(localStorage.getItem('balance')) || 0;
         let energy = parseInt(localStorage.getItem('energy')) || 1000;
         let maxEnergy = parseInt(localStorage.getItem('maxEnergy')) || 1000;
