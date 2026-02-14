@@ -7,159 +7,39 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.min.js"></script>
     <style>
-        body { 
-            background: linear-gradient(to bottom, #000000, #0f0f0f); 
-            color: white; 
-            font-family: 'Arial', sans-serif; 
-            text-align: center; 
-            margin: 0; 
-            padding: 0; 
-            overflow: hidden; 
-            height: 100vh; 
-        }
-        #header { 
-            padding: 18px 0 12px 0; 
-            background: rgba(20, 20, 20, 0.95); 
-            border-bottom: 1px solid #333; 
-            position: relative; 
-            z-index: 10; 
-        }
-        #league { font-size: 22px; font-weight: bold; margin-bottom: 6px; }
-        #balance { font-size: 34px; font-weight: bold; margin-bottom: 18px; letter-spacing: 1px; }
-        #stats { 
-            display: flex; 
-            justify-content: space-around; 
-            margin: 18px 0 25px 0; 
-            padding: 0 10px; 
-        }
-        .stat-card { 
-            background: rgba(255, 215, 0, 0.08); 
-            padding: 10px 12px; 
-            border-radius: 12px; 
-            width: 29%; 
-            box-shadow: 0 3px 8px rgba(0,0,0,0.6); 
-            border: 1px solid rgba(255, 215, 0, 0.2); 
-        }
-        .stat-label { font-size: 13px; color: #aaa; margin-bottom: 4px; }
-        .stat-value { font-size: 19px; font-weight: bold; color: #ffd700; }
-        #mine-area { margin: 35px 0 25px 0; position: relative; }
-        .circle { 
-            width: 268px; 
-            height: 268px; 
-            background: transparent; 
-            border-radius: 50%; 
-            margin: auto; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            cursor: pointer; 
-            transition: transform 0.12s ease, box-shadow 0.3s; 
-            overflow: hidden; 
-            -webkit-tap-highlight-color: transparent; 
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.35); 
-        }
-        .circle:active { transform: scale(0.92); box-shadow: 0 0 40px rgba(255, 215, 0, 0.6); }
-        .logo-img { width: 268px; height: 268px; object-fit: cover; }
-        #energy { margin: 15px 0 35px 0; }
-        #energy-bar { 
-            background: #1c1c1c; 
-            height: 24px; 
-            width: 76%; 
-            max-width: 340px; 
-            margin: auto; 
-            border-radius: 14px; 
-            overflow: hidden; 
-            box-shadow: inset 0 3px 6px rgba(0,0,0,0.7); 
-        }
-        #energy-fill { 
-            background: linear-gradient(90deg, #ffd700, #ffaa00, #ffd700); 
-            height: 100%; 
-            transition: width 0.5s ease; 
-            box-shadow: 0 0 10px #ffd700; 
-        }
-        #energy-text { font-size: 19px; font-weight: bold; margin-top: 10px; }
-        #recharge-text { font-size: 14px; color: #888; margin-top: 4px; }
-        #tabs { 
-            display: flex; 
-            justify-content: space-around; 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            width: 100%; 
-            background: rgba(0, 0, 0, 0.95); 
-            padding: 14px 0; 
-            border-top: 1px solid #444; 
-            z-index: 1000; 
-            box-shadow: 0 -4px 12px rgba(0,0,0,0.8); 
-        }
-        .tab-btn { 
-            background: rgba(255, 215, 0, 0.12); 
-            border: 1px solid #ffd700; 
-            color: white; 
-            font-size: 14.5px; 
-            padding: 9px 18px; 
-            border-radius: 9px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            transition: all 0.25s; 
-            flex: 1; 
-            margin: 0 6px; 
-        }
-        .tab-btn:hover, .tab-btn.active { background: rgba(255, 215, 0, 0.35); transform: translateY(-2px); }
-        .tab-content { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0, 0, 0, 0.96); 
-            z-index: 999; 
-            padding: 75px 15px 95px 15px; 
-            overflow-y: auto; 
-            box-sizing: border-box; 
-        }
+        body { background: linear-gradient(to bottom, #000, #111); color: white; font-family: Arial, sans-serif; text-align: center; margin: 0; padding: 0; overflow: hidden; }
+        #header { padding: 15px 0; }
+        #league-balance { font-size: 19px; margin-bottom: 12px; }
+        #league { font-weight: bold; }
+        #balance { font-size: 28px; font-weight: bold; margin-bottom: 15px; }
+        #stats { display: flex; justify-content: space-around; margin: 15px 0; }
+        .stat-card { background: rgba(255, 215, 0, 0.1); padding: 6px 8px; border-radius: 10px; width: 28%; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.6); }
+        .stat-label { color: #aaa; }
+        .stat-value { font-weight: bold; }
+        #mine-area { margin: 30px 0 20px 0; position: relative; }
+        .circle { width: 252px; height: 252px; background: transparent; border-radius: 50%; margin: auto; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.1s; overflow: hidden; -webkit-tap-highlight-color: transparent; box-shadow: 0 0 25px rgba(255, 215, 0, 0.4); }
+        .circle:active { transform: scale(0.94); }
+        .logo-img { width: 252px; height: 252px; object-fit: cover; }
+        #energy { margin: 10px 0 30px 0; display: flex; justify-content: space-between; padding: 0 25px; align-items: center; }
+        #energy-label { font-size: 18px; font-weight: bold; }
+        #energy-text { font-size: 18px; font-weight: bold; }
+        #energy-bar { background: #222; height: 20px; width: 78%; max-width: 340px; margin: auto; border-radius: 12px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.6); }
+        #energy-fill { background: linear-gradient(to right, #ffd700, #ffaa00); height: 100%; transition: width 0.4s ease; }
+        #tabs { display: flex; justify-content: space-around; position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0, 0, 0, 0.9); padding: 12px 0; border-top: 1px solid #333; z-index: 1000; }
+        .tab-btn { background: rgba(255, 215, 0, 0.15); border: 1px solid #ffd700; color: white; font-size: 14px; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: background 0.3s; flex: 1; margin: 0 4px; }
+        .tab-btn:hover { background: rgba(255, 215, 0, 0.35); }
+        .tab-content { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 999; padding: 20px; overflow-y: auto; box-sizing: border-box; }
         .active { display: block; }
         ul { list-style: none; padding: 0; }
-        li { 
-            margin: 22px 0; 
-            background: rgba(40, 40, 40, 0.85); 
-            padding: 22px; 
-            border-radius: 16px; 
-            box-shadow: 0 6px 15px rgba(0,0,0,0.7); 
-            transition: all 0.3s; 
-        }
-        li:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(255, 215, 0, 0.15); }
-        button { 
-            background: linear-gradient(135deg, #ffd700, #ffaa00); 
-            color: black; 
-            border: none; 
-            padding: 14px 30px; 
-            border-radius: 14px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.6); 
-            transition: all 0.2s; 
-        }
-        button:active { transform: scale(0.95); }
-        #floating-gain { 
-            position: absolute; 
-            font-size: 36px; 
-            font-weight: bold; 
-            color: #ffd700; 
-            pointer-events: none; 
-            animation: floatUp 1.2s ease-out forwards; 
-            text-shadow: 0 0 12px #ffd700; 
-        }
-        @keyframes floatUp { 
-            0% { opacity: 1; transform: translateY(0) scale(1); } 
-            100% { opacity: 0; transform: translateY(-130px) scale(0.8); } 
-        }
-        .icon { font-size: 48px; margin-bottom: 12px; }
+        li { margin: 25px 0; background: rgba(34, 34, 34, 0.9); padding: 25px; border-radius: 16px; box-shadow: 0 6px 12px rgba(0,0,0,0.6); transition: transform 0.2s; }
+        li:hover { transform: translateY(-5px); }
+        button { background: linear-gradient(to right, #ffd700, #ffaa00); color: black; border: none; padding: 14px 28px; border-radius: 14px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 8px rgba(0,0,0,0.5); transition: transform 0.1s; }
+        button:active { transform: scale(0.96); }
+        #floating-gain { position: absolute; font-size: 34px; font-weight: bold; color: #ffd700; pointer-events: none; animation: floatUp 1.1s ease-out forwards; text-shadow: 0 0 10px #ffd700; }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-120px); } }
     </style>
 </head>
 <body>
-    <!-- صفحه اصلی همیشه نمایش داده می‌شود -->
     <div id="main-content">
         <div id="header">
             <div id="league-balance">
@@ -169,7 +49,7 @@
             <div id="stats">
                 <div class="stat-card">
                     <div class="stat-label">Profit / Hour</div>
-                    <div class="stat-value" id="profit-hour">+1,000</div>
+                    <div class="stat-value" id="profit-hour">+1000</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Per Tap</div>
@@ -190,12 +70,12 @@
         </div>
 
         <div id="energy">
-            Energy: <div id="energy-bar"><div id="energy-fill" style="width: 100%;"></div></div>
-            <div id="energy-text">1,000/1,000</div>
+            <span id="energy-label">Energy:</span>
+            <span id="energy-text">1000/1000</span>
         </div>
+        <div id="energy-bar"><div id="energy-fill" style="width: 100%;"></div></div>
     </div>
 
-    <!-- تب‌ها -->
     <div id="tabs">
         <button class="tab-btn" onclick="showTab('home')">Home</button>
         <button class="tab-btn" onclick="showTab('shop')">Shop</button>
@@ -203,7 +83,6 @@
         <button class="tab-btn" onclick="showTab('boosts')">Boosts</button>
     </div>
 
-    <!-- تب محتواها (overlay) -->
     <div id="shop" class="tab-content">
         <h2>Buy Tickets (with TON)</h2>
         <ul id="tickets-list"></ul>
@@ -212,12 +91,12 @@
     <div id="tasks" class="tab-content">
         <h2>Tasks</h2>
         <ul>
-            <li>Join Telegram Channel <button onclick="completeTask('channel', 5000); window.open('https://t.me/Nexus_Planet', '_blank')">Join & Complete (+5,000 nexoshi)</button></li>
-            <li>Join Telegram Chat <button onclick="completeTask('chat', 5000); window.open('https://t.me/Nexus_Planet_Chat', '_blank')">Join & Complete (+5,000 nexoshi)</button></li>
-            <li>Follow on X (Twitter) <button onclick="completeTask('twitter', 5000); window.open('https://twitter.com/Cyrus_Nexus', '_blank')">Follow & Complete (+5,000 nexoshi)</button></li>
-            <li>Daily Login <button onclick="claimDaily()">Claim (+1,000 to +5,000 based on streak)</button> <span id="streak">Streak: 0</span></li>
-            <li>Connect Wallet <button onclick="connectWallet()">Connect TON Keeper (+2,000 nexoshi)</button></li>
-            <li>Deposit 1 TON <button onclick="depositOneTON()">Complete (+5,000 nexoshi)</button></li>
+            <li>Join Telegram Channel <button onclick="completeTask('channel', 5000); window.open('https://t.me/Nexus_Planet', '_blank')">Join & Complete (+5000 nexoshi)</button></li>
+            <li>Join Telegram Chat <button onclick="completeTask('chat', 5000); window.open('https://t.me/Nexus_Planet_Chat', '_blank')">Join & Complete (+5000 nexoshi)</button></li>
+            <li>Follow on X (Twitter) <button onclick="completeTask('twitter', 5000); window.open('https://twitter.com/Cyrus_Nexus', '_blank')">Follow & Complete (+5000 nexoshi)</button></li>
+            <li>Daily Login <button onclick="claimDaily()">Claim (+1000 to +5000 based on streak)</button> <span id="streak">Streak: 0</span></li>
+            <li>Connect Wallet <button onclick="connectWallet()">Connect TON Keeper (+2000 nexoshi)</button></li>
+            <li>Deposit 1 TON <button onclick="depositOneTON()">Complete (+5000 nexoshi)</button></li>
         </ul>
         <div id="referral-section">
             <h3>Referrals</h3>
@@ -232,16 +111,16 @@
     <div id="boosts" class="tab-content">
         <h2>Boosts</h2>
         <ul>
-            <li><span class="icon">⚡</span> Super Mine (Temporary +50% speed): Cost 10,000 nexoshi <button onclick="applyBoost('super', 10000, () => { setTimeout(resetBoost, 3600000); })">Buy</button></li>
-            <li><span class="icon">🤖</span> Auto Miner (Auto tap every 5s): Cost 20,000 nexoshi <button onclick="if (balance >= 100000) applyBoost('auto', 20000, startAutoMine); else alert('You need at least 100,000 nexoshi to buy Auto Miner!');">Buy</button></li>
-            <li><span class="icon">🔥</span> Tap Multiplier (+1x permanent): Cost 15,000 nexoshi <button onclick="applyBoost('multiplier', 15000, () => multiplier += 1)">Buy</button></li>
-            <li><span class="icon">⚡</span> Recharge Time (Faster recharge): Cost 12,000 nexoshi <button onclick="applyBoost('recharge', 12000, () => rechargeRate += 1)">Buy</button></li>
-            <li><span class="icon">🛡️</span> Capacity (+500 max energy): Cost 18,000 nexoshi <button onclick="applyBoost('capacity', 18000, () => maxEnergy += 500)">Buy</button></li>
+            <li><span style="font-size:48px">⚡</span> Super Mine (Free - 3 per day) <button onclick="useSuperMine()">Activate Super Mine</button></li>
+            <li><span style="font-size:48px">🤖</span> Auto Miner: Cost 20,000 nexoshi <button onclick="applyBoost('auto', 20000, startAutoMine)">Buy</button></li>
+            <li><span style="font-size:48px">🔥</span> Tap Multiplier (+1x permanent): Cost 15,000 nexoshi <button onclick="applyBoost('multiplier', 15000, () => multiplier += 1)">Buy</button></li>
+            <li><span style="font-size:48px">⚡</span> Recharge Time (Faster recharge): Cost 12,000 nexoshi <button onclick="applyBoost('recharge', 12000, () => rechargeRate += 1)">Buy</button></li>
+            <li><span style="font-size:48px">🛡️</span> Capacity (+500 max energy): Cost 18,000 nexoshi <button onclick="applyBoost('capacity', 18000, () => maxEnergy += 500)">Buy</button></li>
         </ul>
     </div>
 
     <script>
-        // تمام متغیرها و فانکشن‌ها (کامل و بدون کوتاه کردن)
+        // تمام متغیرها
         let balance = parseInt(localStorage.getItem('balance')) || 0;
         let energy = parseInt(localStorage.getItem('energy')) || 1000;
         let maxEnergy = parseInt(localStorage.getItem('maxEnergy')) || 1000;
@@ -257,6 +136,8 @@
         let lastLogin = parseInt(localStorage.getItem('lastLogin')) || 0;
         let referrals = JSON.parse(localStorage.getItem('referrals')) || [];
         let referralEarnings = parseInt(localStorage.getItem('referralEarnings')) || 0;
+        let superMineUses = parseInt(localStorage.getItem('superMineUses')) || 0;
+        let lastSuperMineDate = localStorage.getItem('lastSuperMineDate') || '';
         let autoMineInterval = null;
         let tonConnector = null;
         let currentTab = 'home';
@@ -272,16 +153,16 @@
         ];
 
         function updateUI() {
-            document.getElementById('balance').innerText = balance.toLocaleString('en-US') + ' nexoshi';
+            document.getElementById('balance').innerText = Math.floor(balance) + ' nexoshi';
             document.getElementById('league').innerText = league + ' League';
             document.getElementById('per-tap').innerText = perTap;
             document.getElementById('multiplier').innerText = multiplier.toFixed(1) + 'x';
-            document.getElementById('profit-hour').innerText = '+' + profitHour.toLocaleString('en-US');
-            document.getElementById('energy-text').innerText = energy.toLocaleString('en-US') + '/' + maxEnergy.toLocaleString('en-US');
+            document.getElementById('profit-hour').innerText = '+' + Math.floor(profitHour);
+            document.getElementById('energy-text').innerText = Math.floor(energy) + '/' + maxEnergy;
             document.getElementById('energy-fill').style.width = (energy / maxEnergy * 100) + '%';
             document.getElementById('streak').innerText = 'Streak: ' + dailyStreak;
             document.getElementById('referral-count').innerText = referrals.length;
-            document.getElementById('referral-earnings').innerText = referralEarnings.toLocaleString('en-US') + ' nexoshi';
+            document.getElementById('referral-earnings').innerText = Math.floor(referralEarnings) + ' nexoshi';
             localStorage.setItem('balance', balance);
             localStorage.setItem('energy', energy);
             localStorage.setItem('maxEnergy', maxEnergy);
@@ -308,7 +189,7 @@
                 updateUI();
 
                 const floating = document.createElement('div');
-                floating.innerText = '+' + gain.toFixed(0);
+                floating.innerText = '+' + Math.floor(gain);
                 floating.id = 'floating-gain';
                 floating.style.left = (event.clientX - 30) + 'px';
                 floating.style.top = (event.clientY - 30) + 'px';
@@ -333,7 +214,7 @@
             if (newLeague !== league) {
                 league = newLeague;
                 balance += reward;
-                alert(`Congratulations! You reached ${newLeague} league. Reward: ${reward.toLocaleString('en-US')} nexoshi`);
+                alert(`Congratulations! You reached ${newLeague} league. Reward: ${Math.floor(reward)} nexoshi`);
                 updateUI();
             }
         }
@@ -349,11 +230,8 @@
         function showTab(tabId) {
             currentTab = tabId;
             Telegram.WebApp.BackButton.show();
-            document.getElementById('main-content').style.display = (tabId === 'home') ? 'block' : 'none';
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            if (tabId !== 'home') {
-                document.getElementById(tabId).classList.add('active');
-            }
+            document.getElementById(tabId).classList.add('active');
         }
 
         Telegram.WebApp.onEvent('backButtonPressed', () => {
@@ -411,7 +289,7 @@
             if (completedTasks[taskId]) return alert('This task is already completed!');
             balance += reward;
             completedTasks[taskId] = true;
-            alert(`Task completed! + ${reward.toLocaleString('en-US')} nexoshi`);
+            alert(`Task completed! + ${Math.floor(reward)} nexoshi`);
             updateUI();
         }
 
@@ -422,7 +300,7 @@
                 lastLogin = now;
                 const reward = Math.min(1000 * dailyStreak, 5000);
                 balance += reward;
-                alert(`Daily claim! + ${reward.toLocaleString('en-US')} nexoshi. Streak: ${dailyStreak}`);
+                alert(`Daily claim! + ${Math.floor(reward)} nexoshi. Streak: ${dailyStreak}`);
                 updateUI();
             } else {
                 alert('Claim later!');
@@ -463,33 +341,15 @@
         function copyReferral() {
             const link = document.getElementById('referral-link').innerText;
             navigator.clipboard.writeText(link);
-            alert('Referral link copied to clipboard!');
+            alert('Referral link copied!');
         }
 
         function initReferral() {
             const tg = Telegram.WebApp;
             const userId = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : 'test';
-            const botUsername = 'YourBotUsername'; // Change to your real bot username
+            const botUsername = 'YourBotUsername'; // تغییر بده
             const referralLink = `https://t.me/${botUsername}?start=ref_${userId}`;
             document.getElementById('referral-link').innerText = referralLink;
-            const refParam = new URLSearchParams(window.location.search).get('ref');
-            if (refParam && refParam !== userId && !referrals.includes(refParam)) {
-                referrals.push(refParam);
-                const count = referrals.length;
-                let reward = 0;
-                if (count === 1) reward = 2500;
-                else if (count === 3) reward = 10000;
-                else if (count === 5) reward = 25000;
-                else if (count === 10) reward = 50000;
-                else if (count === 20) reward = 100000;
-                else if (count === 30) reward = 150000;
-                else if (count === 40) reward = 200000;
-                else if (count === 50) reward = 250000;
-                else reward = 5000;
-                referralEarnings += reward;
-                balance += reward;
-                alert(`New referral! + ${reward.toLocaleString('en-US')} nexoshi`);
-            }
             updateUI();
         }
 
@@ -502,7 +362,7 @@
                 energy += offlineEnergyGain;
                 if (energy > maxEnergy) energy = maxEnergy;
                 balance += offlineBalanceGain;
-                alert(`Offline gain: + ${offlineBalanceGain.toFixed(0)} nexoshi, energy charged: + ${offlineEnergyGain.toFixed(0)}`);
+                alert(`Offline gain: + ${Math.floor(offlineBalanceGain)} nexoshi, energy charged: + ${Math.floor(offlineEnergyGain)}`);
                 updateUI();
             }
             localStorage.setItem('lastExit', Date.now());
@@ -515,7 +375,7 @@
         loadTickets();
         initReferral();
         calculateOfflineGain();
-        showTab('home'); // Default to home
+        showTab('home');
     </script>
 </body>
 </html>
