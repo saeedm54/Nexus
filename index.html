@@ -6,8 +6,6 @@
     <title>Nexus Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-database.js"></script>
     <style>
         body { background: black; color: white; font-family: Arial, sans-serif; text-align: center; margin: 0; padding: 0; overflow: hidden; }
         #header { padding: 10px; background: #1a1a1a; }
@@ -95,35 +93,22 @@
     </div>
 
     <script>
-        // Firebase config – Replace with your own
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "your-project.firebaseapp.com",
-            databaseURL: "https://your-project-default-rtdb.firebaseio.com",
-            projectId: "your-project",
-            storageBucket: "your-project.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.database(app);
-
-        let userId = null;
-        let balance = 0;
-        let energy = 1000;
-        let maxEnergy = 1000;
-        let perTap = 1;
-        let multiplier = 2;
-        let profitHour = 1000;
-        let league = 'Beginner';
-        let rechargeRate = 1;
+        // Local storage for testing (instead of Firebase)
+        let balance = parseInt(localStorage.getItem('balance')) || 0;
+        let energy = parseInt(localStorage.getItem('energy')) || 1000;
+        let maxEnergy = parseInt(localStorage.getItem('maxEnergy')) || 1000;
+        let perTap = parseInt(localStorage.getItem('perTap')) || 1;
+        let multiplier = parseFloat(localStorage.getItem('multiplier')) || 2;
+        let profitHour = parseInt(localStorage.getItem('profitHour')) || 1000;
+        let league = localStorage.getItem('league') || 'Beginner';
+        let rechargeRate = parseInt(localStorage.getItem('rechargeRate')) || 1;
         let wallet = 'UQDGdS6hW27b98YGvxyaljwZUHX-UA4w6MwbaFFUHMBhhk48';
-        let boughtTickets = {};
-        let completedTasks = {};
-        let dailyStreak = 0;
-        let lastLogin = 0;
-        let referrals = [];
-        let referralEarnings = 0;
+        let boughtTickets = JSON.parse(localStorage.getItem('boughtTickets')) || {};
+        let completedTasks = JSON.parse(localStorage.getItem('completedTasks')) || {};
+        let dailyStreak = parseInt(localStorage.getItem('dailyStreak')) || 0;
+        let lastLogin = parseInt(localStorage.getItem('lastLogin')) || 0;
+        let referrals = JSON.parse(localStorage.getItem('referrals')) || [];
+        let referralEarnings = parseInt(localStorage.getItem('referralEarnings')) || 0;
         let autoMineInterval = null;
         let tonConnector = null;
 
@@ -148,44 +133,20 @@
             document.getElementById('streak').innerText = 'Streak: ' + dailyStreak;
             document.getElementById('referral-count').innerText = referrals.length;
             document.getElementById('referral-earnings').innerText = referralEarnings.toLocaleString() + ' nexoshi';
-        }
-
-        async function initUserData() {
-            const tg = Telegram.WebApp;
-            userId = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : 'guest_' + Math.random().toString(36).slice(2);
-            const userRef = db.ref('users/' + userId);
-            const snapshot = await userRef.once('value');
-            const data = snapshot.val();
-            if (data) {
-                balance = data.balance || 0;
-                energy = data.energy || 1000;
-                maxEnergy = data.maxEnergy || 1000;
-                perTap = data.perTap || 1;
-                multiplier = data.multiplier || 2;
-                profitHour = data.profitHour || 1000;
-                league = data.league || 'Beginner';
-                rechargeRate = data.rechargeRate || 1;
-                boughtTickets = data.boughtTickets || {};
-                completedTasks = data.completedTasks || {};
-                dailyStreak = data.dailyStreak || 0;
-                lastLogin = data.lastLogin || 0;
-                referrals = data.referrals || [];
-                referralEarnings = data.referralEarnings || 0;
-            }
-            updateUI();
-            loadTickets();
-            initReferral();
-            claimDaily();
-            calculateOfflineGain();
-        }
-
-        function saveUserData() {
-            if (!userId) return;
-            db.ref('users/' + userId).set({
-                balance, energy, maxEnergy, perTap, multiplier, profitHour, league, rechargeRate,
-                boughtTickets, completedTasks, dailyStreak, lastLogin, referrals, referralEarnings,
-                lastExit: Date.now()
-            });
+            localStorage.setItem('balance', balance);
+            localStorage.setItem('energy', energy);
+            localStorage.setItem('maxEnergy', maxEnergy);
+            localStorage.setItem('perTap', perTap);
+            localStorage.setItem('multiplier', multiplier);
+            localStorage.setItem('profitHour', profitHour);
+            localStorage.setItem('league', league);
+            localStorage.setItem('rechargeRate', rechargeRate);
+            localStorage.setItem('boughtTickets', JSON.stringify(boughtTickets));
+            localStorage.setItem('completedTasks', JSON.stringify(completedTasks));
+            localStorage.setItem('dailyStreak', dailyStreak);
+            localStorage.setItem('lastLogin', lastLogin);
+            localStorage.setItem('referrals', JSON.stringify(referrals));
+            localStorage.setItem('referralEarnings', referralEarnings);
         }
 
         function mine() {
@@ -196,7 +157,6 @@
                 profitHour = Math.floor(balance / 1000) * 100;
                 checkLeague();
                 updateUI();
-                saveUserData();
             } else {
                 alert('Energy is empty! Wait for recharge.');
             }
@@ -209,7 +169,7 @@
             else if (balance < 500000 && league !== 'Bronze') { newLeague = 'Bronze'; reward = 10000; }
             else if (balance < 1000000 && league !== 'Silver') { newLeague = 'Silver'; reward = 50000; }
             else if (balance < 5000000 && league !== 'Gold') { newLeague = 'Gold'; reward = 100000; }
-            else if (balance < 10000000 && league !== 'Platinum') { #newLeague = 'Platinum'; reward = 200000; }
+            else if (balance < 10000000 && league !== 'Platinum') { newLeague = 'Platinum'; reward = 200000; }
             else if (balance < 50000000 && league !== 'Diamond') { newLeague = 'Diamond'; reward = 500000; }
             else if (league !== 'Legendary') { newLeague = 'Legendary'; reward = 1000000; }
 
@@ -218,7 +178,6 @@
                 balance += reward;
                 alert(`Congratulations! You reached ${newLeague} league. Reward: ${reward} nexoshi`);
                 updateUI();
-                saveUserData();
             }
         }
 
@@ -227,7 +186,6 @@
                 energy += rechargeRate;
                 if (energy > maxEnergy) energy = maxEnergy;
                 updateUI();
-                saveUserData();
             }
         }, 60000 / rechargeRate);
 
@@ -270,7 +228,6 @@
                     alert(`Payment successful! ${name} ticket purchased.`);
                     updateUI();
                     loadTickets();
-                    saveUserData();
                 } catch (error) {
                     alert('Payment error: ' + error.message);
                 }
@@ -279,7 +236,7 @@
 
         async function initTonConnect() {
             tonConnector = new TonConnectSDK.TonConnect({
-                manifestUrl: 'https://your-site.com/tonconnect-manifest.json' // Replace with your manifest
+                manifestUrl: 'https://your-site.com/tonconnect-manifest.json' // Replace with your manifest later
             });
             await tonConnector.restoreConnection();
         }
@@ -290,7 +247,6 @@
             completedTasks[taskId] = true;
             alert(`Task completed! + ${reward} nexoshi`);
             updateUI();
-            saveUserData();
         }
 
         function claimDaily() {
@@ -302,7 +258,6 @@
                 balance += reward;
                 alert(`Daily claim! + ${reward} nexoshi. Streak: ${dailyStreak}`);
                 updateUI();
-                saveUserData();
             } else {
                 alert('Claim later!');
             }
@@ -312,13 +267,11 @@
             if (!tonConnector) await initTonConnect();
             await tonConnector.connectWallet();
             completeTask('wallet', 2000);
-            saveUserData();
         }
 
         async function depositOneTON() {
             await buyTicket('Deposit1', 1, 0);
             completeTask('deposit', 5000);
-            saveUserData();
         }
 
         function applyBoost(type, cost, effect) {
@@ -327,7 +280,6 @@
             effect();
             alert(`${type} boost applied!`);
             updateUI();
-            saveUserData();
         }
 
         function startAutoMine() {
@@ -340,13 +292,11 @@
         function resetBoost() {
             multiplier -= 0.5;
             updateUI();
-            saveUserData();
         }
 
         function initReferral() {
-            const tg = Telegram.WebApp;
             const refParam = new URLSearchParams(window.location.search).get('ref');
-            if (refParam && refParam !== userId && !referrals.includes(refParam)) {
+            if (refParam && !referrals.includes(refParam)) {
                 referrals.push(refParam);
                 const count = referrals.length;
                 let reward = 0;
@@ -362,30 +312,30 @@
                 referralEarnings += reward;
                 balance += reward;
                 alert(`New referral! + ${reward} nexoshi`);
-                saveUserData();
             }
-            const botUsername = 'YourBotUsername'; // Replace with your bot username
-            document.getElementById('referral-link').innerText = `https://t.me/${botUsername}?start=ref_${userId}`;
+            document.getElementById('referral-link').innerText = `Referral link: https://t.me/yourbot?start=ref_test`; // Replace with real
             updateUI();
         }
 
-        async function calculateOfflineGain() {
-            const userRef = db.ref('users/' + userId + '/lastExit');
-            const snapshot = await userRef.once('value');
-            const lastExit = snapshot.val() || Date.now();
+        function calculateOfflineGain() {
+            const lastExit = parseInt(localStorage.getItem('lastExit')) || Date.now();
             const offlineTime = (Date.now() - lastExit) / 3600000;
             const offlineGain = Math.min(profitHour * offlineTime, maxEnergy);
             if (offlineGain > 0) {
                 balance += offlineGain;
                 alert(`Offline gain: + ${offlineGain.toFixed(0)} nexoshi`);
                 updateUI();
-                saveUserData();
             }
+            localStorage.setItem('lastExit', Date.now());
         }
 
         Telegram.WebApp.ready();
         Telegram.WebApp.expand();
-        initUserData();
+        updateUI();
+        loadTickets();
+        initReferral();
+        claimDaily();
+        calculateOfflineGain();
     </script>
 </body>
 
