@@ -16,15 +16,15 @@
         .circle { width: 280px; height: 280px; background: transparent; border-radius: 50%; margin: auto; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.1s; overflow: hidden; -webkit-tap-highlight-color: transparent; }
         .circle:active { transform: scale(0.95); }
         .logo-img { width: 280px; height: 280px; object-fit: cover; }
-        #tabs { display: flex; justify-content: flex-end; position: absolute; top: 10px; right: 10px; background: transparent; padding: 5px; }
-        .tab-btn { background: #ffd700; color: black; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 14px; margin-left: 5px; font-weight: bold; }
-        .tab-content { display: none; margin: 20px 0 80px 0; padding: 10px; }
-        .active { display: block; }
-        #energy { margin: 10px 0; text-align: left; padding-left: 20px; position: absolute; top: 50px; left: 10px; }
-        #energy-bar { background: #333; height: 20px; width: 150px; border-radius: 10px; overflow: hidden; }
+        #energy { margin: 20px 0; }
+        #energy-bar { background: #333; height: 30px; width: 80%; max-width: 350px; margin: auto; border-radius: 15px; overflow: hidden; }
         #energy-fill { background: #ffd700; height: 100%; transition: width 0.3s; }
-        #energy-text { font-size: 14px; margin-top: 5px; }
-        #recharge-text { font-size: 12px; color: #aaa; }
+        #energy-text { font-size: 18px; margin-top: 10px; }
+        #recharge-text { font-size: 14px; color: #aaa; }
+        #tabs { display: flex; justify-content: space-around; position: fixed; bottom: 0; left: 0; width: 100%; background: #1a1a1a; padding: 10px 0; border-top: 1px solid #444; z-index: 1000; }
+        .tab-btn { background: none; border: none; color: white; font-size: 16px; cursor: pointer; flex: 1; }
+        .tab-content { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 999; padding: 60px 10px 60px 10px; overflow-y: auto; box-sizing: border-box; }
+        .active { display: block; }
         ul { list-style: none; padding: 0; }
         li { margin: 15px 0; background: #222; padding: 15px; border-radius: 10px; }
         button { background: #ffd700; color: black; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; }
@@ -53,11 +53,6 @@
             </div>
         </div>
     </div>
-    <div id="tabs">
-        <button class="tab-btn" onclick="showTab('shop')">Shop</button>
-        <button class="tab-btn" onclick="showTab('tasks')">Tasks</button>
-        <button class="tab-btn" onclick="showTab('boosts')">Boosts</button>
-    </div>
     <div id="mine-area" onclick="mine(event)">
         <div class="circle">
             <img src="https://i.imgur.com/c1kFmHd.png" alt="Nexus Coin" class="logo-img">
@@ -68,6 +63,12 @@
         Energy: <div id="energy-bar"><div id="energy-fill" style="width: 100%;"></div></div>
         <div id="energy-text">1,000/1,000</div>
         <div id="recharge-text">Full recharge in ~3h</div>
+    </div>
+
+    <div id="tabs">
+        <button class="tab-btn" onclick="showTab('shop')">Shop</button>
+        <button class="tab-btn" onclick="showTab('tasks')">Tasks</button>
+        <button class="tab-btn" onclick="showTab('boosts')">Boosts</button>
     </div>
 
     <div id="shop" class="tab-content">
@@ -205,7 +206,7 @@
 
         setInterval(() => {
             if (energy < maxEnergy) {
-                energy += 1; // +1 per second, even offline (interval always runs in background if page open, but for true offline, use gain on load)
+                energy += 1; // +1 per second
                 if (energy > maxEnergy) energy = maxEnergy;
                 updateUI();
             }
