@@ -7,28 +7,30 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.min.js"></script>
     <style>
-        body { background: black; color: white; font-family: Arial, sans-serif; text-align: center; margin: 0; padding: 0; overflow: hidden; }
-        #header { padding: 10px; background: #1a1a1a; }
-        #league-balance { font-size: 18px; margin-bottom: 10px; }
-        #stats { display: flex; justify-content: space-around; margin: 20px 0; }
-        .stat-card { background: #222; padding: 10px; border-radius: 10px; width: 30%; }
-        #mine-area { margin: 40px 0; position: relative; }
-        .circle { width: 280px; height: 280px; background: transparent; border-radius: 50%; margin: auto; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.1s; overflow: hidden; -webkit-tap-highlight-color: transparent; }
-        .circle:active { transform: scale(0.95); }
-        .logo-img { width: 280px; height: 280px; object-fit: cover; }
-        #energy { margin: 20px 0; }
-        #energy-bar { background: #333; height: 30px; width: 80%; max-width: 350px; margin: auto; border-radius: 15px; overflow: hidden; }
-        #energy-fill { background: #ffd700; height: 100%; transition: width 0.3s; }
-        #energy-text { font-size: 18px; margin-top: 10px; }
-        #recharge-text { font-size: 14px; color: #aaa; }
-        #tabs { display: flex; justify-content: space-around; position: fixed; bottom: 0; left: 0; width: 100%; background: #1a1a1a; padding: 10px 0; border-top: 1px solid #444; z-index: 1000; }
-        .tab-btn { background: none; border: none; color: white; font-size: 16px; cursor: pointer; flex: 1; }
-        .tab-content { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 999; padding: 60px 10px 60px 10px; overflow-y: auto; box-sizing: border-box; }
+        body { background: linear-gradient(to bottom, #000, #111); color: white; font-family: Arial, sans-serif; text-align: center; margin: 0; padding: 0; overflow: hidden; }
+        #header { padding: 15px; background: rgba(26, 26, 26, 0.8); border-bottom: 1px solid #333; }
+        #league-balance { font-size: 20px; margin-bottom: 15px; }
+        #stats { display: flex; justify-content: space-around; margin: 25px 0; }
+        .stat-card { background: rgba(34, 34, 34, 0.8); padding: 12px; border-radius: 12px; width: 28%; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        #mine-area { margin: 50px 0; position: relative; }
+        .circle { width: 300px; height: 300px; background: transparent; border-radius: 50%; margin: auto; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.1s, box-shadow 0.3s; overflow: hidden; -webkit-tap-highlight-color: transparent; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+        .circle:active { transform: scale(0.95); box-shadow: 0 0 30px rgba(255, 215, 0, 0.5); }
+        .logo-img { width: 300px; height: 300px; object-fit: cover; }
+        #energy { margin: 25px 0; }
+        #energy-bar { background: #333; height: 35px; width: 85%; max-width: 380px; margin: auto; border-radius: 18px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        #energy-fill { background: linear-gradient(to right, #ffd700, #ffaa00); height: 100%; transition: width 0.3s ease-in-out; }
+        #energy-text { font-size: 20px; margin-top: 12px; }
+        #recharge-text { font-size: 16px; color: #bbb; }
+        #tabs { display: flex; justify-content: space-around; position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(26, 26, 26, 0.8); padding: 12px 0; border-top: 1px solid #333; z-index: 1000; box-shadow: 0 -2px 4px rgba(0,0,0,0.5); }
+        .tab-btn { background: rgba(255, 215, 0, 0.2); border: 1px solid #ffd700; color: white; font-size: 16px; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: background 0.3s; flex: 1; margin: 0 5px; }
+        .tab-btn:hover { background: rgba(255, 215, 0, 0.4); }
+        .tab-content { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 999; padding: 70px 15px 100px 15px; overflow-y: auto; box-sizing: border-box; }
         .active { display: block; }
         ul { list-style: none; padding: 0; }
-        li { margin: 15px 0; background: #222; padding: 15px; border-radius: 10px; }
-        button { background: #ffd700; color: black; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; }
-        #floating-gain { position: absolute; font-size: 30px; font-weight: bold; color: #ffd700; pointer-events: none; animation: floatUp 1s ease-out forwards; }
+        li { margin: 20px 0; background: rgba(34, 34, 34, 0.8); padding: 20px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
+        button { background: linear-gradient(to right, #ffd700, #ffaa00); color: black; border: none; padding: 12px 24px; border-radius: 12px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.5); transition: transform 0.1s; }
+        button:active { transform: scale(0.98); }
+        #floating-gain { position: absolute; font-size: 30px; font-weight: bold; color: #ffd700; pointer-events: none; animation: floatUp 1s ease-out forwards; text-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-100px); } }
     </style>
 </head>
@@ -125,6 +127,7 @@
         let referralEarnings = parseInt(localStorage.getItem('referralEarnings')) || 0;
         let autoMineInterval = null;
         let tonConnector = null;
+        let currentTab = null;
 
         const tickets = [
             {name: 'Bronze', price: 1, boost: 1.5, desc: '1.5x boost + Leaderboard name'},
@@ -213,9 +216,17 @@
         }, 1000);
 
         function showTab(tabId) {
+            currentTab = tabId;
+            Telegram.WebApp.BackButton.show();
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
         }
+
+        Telegram.WebApp.onEvent('backButtonPressed', () => {
+            currentTab = null;
+            Telegram.WebApp.BackButton.hide();
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        });
 
         function loadTickets() {
             const list = document.getElementById('tickets-list');
@@ -357,6 +368,12 @@
 
         Telegram.WebApp.ready();
         Telegram.WebApp.expand();
+        Telegram.WebApp.BackButton.onClick(() => {
+            if (currentTab) {
+                showTab(null); // Return to main page
+            }
+        });
+        Telegram.WebApp.BackButton.hide();
         updateUI();
         loadTickets();
         initReferral();
