@@ -6,121 +6,29 @@
     <title>Nexus Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js"></script> <!-- Firebase App -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-database.js"></script> <!-- Firebase Realtime DB -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-database.js"></script>
     <style>
-        body {
-            background: black;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-        #header {
-            padding: 10px;
-            background: #1a1a1a;
-        }
-        #stats {
-            display: flex;
-            justify-content: space-around;
-            margin: 10px 0;
-            font-size: 14px;
-        }
-        #mine-area {
-            margin: 20px 0;
-            position: relative;
-        }
-        .circle {
-            width: 220px;
-            height: 220px;
-            background: #ffd700; /* Gold yellow */
-            border-radius: 50%;
-            margin: auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-        .circle:active {
-            transform: scale(0.95); /* Tap animation */
-        }
-        .logo-img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%; /* Round if needed */
-        }
-        #energy {
-            margin: 10px 0;
-        }
-        #energy-bar {
-            background: #333;
-            height: 20px;
-            width: 80%;
-            max-width: 300px;
-            margin: auto;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        #energy-fill {
-            background: #ffd700;
-            height: 100%;
-            transition: width 0.3s;
-        }
-        #tabs {
-            display: flex;
-            justify-content: space-around;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background: #1a1a1a;
-            padding: 10px 0;
-            border-top: 1px solid #444;
-        }
-        .tab-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .tab-content {
-            display: none;
-            margin: 20px 0 60px 0;
-            padding: 10px;
-        }
-        .active {
-            display: block;
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-        li {
-            margin: 10px 0;
-            background: #222;
-            padding: 10px;
-            border-radius: 8px;
-        }
-        button {
-            background: #ffd700;
-            color: black;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        a {
-            color: #ffd700;
-        }
-        #referral-section {
-            margin-top: 20px;
-        }
-        #referral-link {
-            word-break: break-all;
-        }
+        body { background: black; color: white; font-family: Arial, sans-serif; text-align: center; margin: 0; padding: 0; overflow: hidden; }
+        #header { padding: 10px; background: #1a1a1a; }
+        #stats { display: flex; justify-content: space-around; margin: 10px 0; font-size: 14px; }
+        #mine-area { margin: 20px 0; position: relative; }
+        .circle { width: 220px; height: 220px; background: #ffd700; border-radius: 50%; margin: auto; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.1s; }
+        .circle:active { transform: scale(0.95); }
+        .logo-img { width: 150px; height: 150px; }
+        #energy { margin: 10px 0; }
+        #energy-bar { background: #333; height: 20px; width: 80%; max-width: 300px; margin: auto; border-radius: 10px; overflow: hidden; }
+        #energy-fill { background: #ffd700; height: 100%; transition: width 0.3s; }
+        #tabs { display: flex; justify-content: space-around; position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 10px 0; border-top: 1px solid #444; }
+        .tab-btn { background: none; border: none; color: white; font-size: 16px; cursor: pointer; }
+        .tab-content { display: none; margin: 20px 0 60px 0; padding: 10px; }
+        .active { display: block; }
+        ul { list-style: none; padding: 0; }
+        li { margin: 10px 0; background: #222; padding: 10px; border-radius: 8px; }
+        button { background: #ffd700; color: black; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+        a { color: #ffd700; }
+        #referral-section { margin-top: 20px; }
+        #referral-link { word-break: break-all; }
     </style>
 </head>
 <body>
@@ -140,7 +48,7 @@
         <p>Tap to mine nexoshi!</p>
     </div>
     <div id="energy">
-        Energy: <div id="energy-bar"><div id="energy-fill" style="width: 100%;"></div></div> <!-- Start full -->
+        Energy: <div id="energy-bar"><div id="energy-fill" style="width: 100%;"></div></div>
         <span id="energy-text">1000/1000</span>
         <p id="recharge-text">Full recharge in ~3h</p>
     </div>
@@ -153,9 +61,7 @@
 
     <div id="shop" class="tab-content">
         <h2>Buy Tickets (with TON)</h2>
-        <ul id="tickets-list">
-            <!-- Dynamic tickets list -->
-        </ul>
+        <ul id="tickets-list"></ul>
     </div>
 
     <div id="tasks" class="tab-content">
@@ -189,7 +95,7 @@
     </div>
 
     <script>
-        // Firebase config – Replace with your own from Firebase Console
+        // Firebase config – Replace with your own
         const firebaseConfig = {
             apiKey: "YOUR_API_KEY",
             authDomain: "your-project.firebaseapp.com",
@@ -202,7 +108,6 @@
         const app = firebase.initializeApp(firebaseConfig);
         const db = firebase.database(app);
 
-        // Main variables
         let userId = null;
         let balance = 0;
         let energy = 1000;
@@ -232,7 +137,6 @@
             {name: 'Ruby', price: 50, boost: 7, desc: '7x boost + Commission from referrals'}
         ];
 
-        // Update UI
         function updateUI() {
             document.getElementById('balance').innerText = balance.toLocaleString() + ' nexoshi';
             document.getElementById('league').innerText = league;
@@ -246,7 +150,6 @@
             document.getElementById('referral-earnings').innerText = referralEarnings.toLocaleString() + ' nexoshi';
         }
 
-        // Init user data from Firebase
         async function initUserData() {
             const tg = Telegram.WebApp;
             userId = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : 'guest_' + Math.random().toString(36).slice(2);
@@ -268,8 +171,6 @@
                 lastLogin = data.lastLogin || 0;
                 referrals = data.referrals || [];
                 referralEarnings = data.referralEarnings || 0;
-            } else {
-                saveUserData(); // Initial save
             }
             updateUI();
             loadTickets();
@@ -278,7 +179,6 @@
             calculateOfflineGain();
         }
 
-        // Save data
         function saveUserData() {
             if (!userId) return;
             db.ref('users/' + userId).set({
@@ -288,7 +188,6 @@
             });
         }
 
-        // Mining
         function mine() {
             if (energy > 0) {
                 let gain = perTap * multiplier;
@@ -303,7 +202,6 @@
             }
         }
 
-        // Check league
         function checkLeague() {
             let newLeague = league;
             let reward = 0;
@@ -311,20 +209,19 @@
             else if (balance < 500000 && league !== 'Bronze') { newLeague = 'Bronze'; reward = 10000; }
             else if (balance < 1000000 && league !== 'Silver') { newLeague = 'Silver'; reward = 50000; }
             else if (balance < 5000000 && league !== 'Gold') { newLeague = 'Gold'; reward = 100000; }
-            else if (balance < 10000000 && league !== 'Platinum') { newLeague = 'Platinum'; reward = 200000; }
+            else if (balance < 10000000 && league !== 'Platinum') { #newLeague = 'Platinum'; reward = 200000; }
             else if (balance < 50000000 && league !== 'Diamond') { newLeague = 'Diamond'; reward = 500000; }
             else if (league !== 'Legendary') { newLeague = 'Legendary'; reward = 1000000; }
 
             if (newLeague !== league) {
                 league = newLeague;
                 balance += reward;
-                alert(`Congratulations! You reached ${league} league. Reward: ${reward} nexoshi`);
+                alert(`Congratulations! You reached ${newLeague} league. Reward: ${reward} nexoshi`);
                 updateUI();
                 saveUserData();
             }
         }
 
-        // Energy recharge
         setInterval(() => {
             if (energy < maxEnergy) {
                 energy += rechargeRate;
@@ -334,13 +231,11 @@
             }
         }, 60000 / rechargeRate);
 
-        // Show tab
         function showTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
         }
 
-        // Load tickets
         function loadTickets() {
             const list = document.getElementById('tickets-list');
             list.innerHTML = '';
@@ -356,7 +251,6 @@
             });
         }
 
-        // Buy ticket
         async function buyTicket(name, price, boost) {
             if (boughtTickets[name]) return alert('You already bought this ticket!');
             if (confirm(`Are you sure you want to buy ${name} ticket for ${price} TON?`)) {
@@ -364,18 +258,16 @@
                     if (!tonConnector) await initTonConnect();
                     const transaction = {
                         validUntil: Math.floor(Date.now() / 1000) + 60,
-                        messages: [
-                            {
-                                address: wallet,
-                                amount: (price * 1e9).toString(),
-                                payload: 'Nexus Ticket: ' + name
-                            }
-                        ]
+                        messages: [{
+                            address: wallet,
+                            amount: (price * 1e9).toString(),
+                            payload: 'Nexus Ticket: ' + name
+                        }]
                     };
                     await tonConnector.sendTransaction(transaction);
                     boughtTickets[name] = true;
                     multiplier += boost - 1;
-                    alert(`Payment successful! ${name} ticket purchased. Boost applied.`);
+                    alert(`Payment successful! ${name} ticket purchased.`);
                     updateUI();
                     loadTickets();
                     saveUserData();
@@ -385,15 +277,13 @@
             }
         }
 
-        // Init TonConnect
         async function initTonConnect() {
             tonConnector = new TonConnectSDK.TonConnect({
-                manifestUrl: 'https://your-site.com/tonconnect-manifest.json' // Replace
+                manifestUrl: 'https://your-site.com/tonconnect-manifest.json' // Replace with your manifest
             });
             await tonConnector.restoreConnection();
         }
 
-        // Complete task
         function completeTask(taskId, reward) {
             if (completedTasks[taskId]) return alert('This task is already completed!');
             balance += reward;
@@ -403,7 +293,6 @@
             saveUserData();
         }
 
-        // Claim daily
         function claimDaily() {
             const now = Date.now();
             if (now - lastLogin > 86400000) {
@@ -419,7 +308,6 @@
             }
         }
 
-        // Connect wallet
         async function connectWallet() {
             if (!tonConnector) await initTonConnect();
             await tonConnector.connectWallet();
@@ -427,14 +315,12 @@
             saveUserData();
         }
 
-        // Deposit 1 TON
         async function depositOneTON() {
             await buyTicket('Deposit1', 1, 0);
             completeTask('deposit', 5000);
             saveUserData();
         }
 
-        // Apply boost
         function applyBoost(type, cost, effect) {
             if (balance < cost) return alert('Not enough nexoshi!');
             balance -= cost;
@@ -444,7 +330,6 @@
             saveUserData();
         }
 
-        // Auto mine
         function startAutoMine() {
             if (autoMineInterval) return;
             autoMineInterval = setInterval(() => {
@@ -458,7 +343,6 @@
             saveUserData();
         }
 
-        // Referral system
         function initReferral() {
             const tg = Telegram.WebApp;
             const refParam = new URLSearchParams(window.location.search).get('ref');
@@ -480,12 +364,11 @@
                 alert(`New referral! + ${reward} nexoshi`);
                 saveUserData();
             }
-            const botUsername = 'YourBotUsername'; // Replace
+            const botUsername = 'YourBotUsername'; // Replace with your bot username
             document.getElementById('referral-link').innerText = `https://t.me/${botUsername}?start=ref_${userId}`;
             updateUI();
         }
 
-        // Offline gain
         async function calculateOfflineGain() {
             const userRef = db.ref('users/' + userId + '/lastExit');
             const snapshot = await userRef.once('value');
@@ -500,7 +383,6 @@
             }
         }
 
-        // Initial
         Telegram.WebApp.ready();
         Telegram.WebApp.expand();
         initUserData();
